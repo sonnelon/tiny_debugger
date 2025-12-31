@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "ui_driver.h"
+#include "repl_driver.h"
 #include "args_t.h"
 #include "cli.h"
 
@@ -18,6 +19,7 @@ int run_ui (char ** argv, int argc) {
     if (args->help) { display_help(); return 0; }
     if (args->version) { display_version(); return 0; }
     
+    if (strlen(args->file_path) != 0) return run_repl(args->file_path);
     free(args);
     return 0;
 }

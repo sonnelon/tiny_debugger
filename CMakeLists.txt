@@ -5,10 +5,12 @@ add_executable(TinyDebugger
     main.c
     src/ui/ui_driver.c
     src/ui/cli/commands.c
+    src/ui/REPL/repl_driver.c
 )
 
 target_include_directories(TinyDebugger
     PRIVATE
+        src/ui/REPL/include
         src/ui/include
         src/include
 )
