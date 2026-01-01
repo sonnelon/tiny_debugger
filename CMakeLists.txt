@@ -7,6 +7,8 @@ add_executable(TinyDebugger
     src/ui/cli/commands.c
     src/ui/REPL/repl_driver.c
     src/ui/REPL/dispatcher.c
+    src/utils/exit_program.c
+    src/utils/logger.c
 )
 
 target_include_directories(TinyDebugger
@@ -14,6 +16,7 @@ target_include_directories(TinyDebugger
         src/ui/REPL/include
         src/ui/include
         src/include
+        src/utils/include
 )
 
 target_compile_options(TinyDebugger PUBLIC -O2 -Wall -Wextra -Wpedantic)

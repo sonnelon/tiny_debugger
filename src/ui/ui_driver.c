@@ -1,16 +1,21 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdbool.h>
+#include <linux/fs.h>
 #include "ui_driver.h"
 #include "repl_driver.h"
 #include "args_t.h"
 #include "cli.h"
+#include "logger.h"
 
 #define HELP_FLAG "--help"
 #define VERSION_FLAG "--version"
 
 static struct args_t * 
 parse_args (char ** argv, int argc);
+static inline bool
+is_correct_file (const char * file_path);
 
 int
 run_ui (char ** argv, int argc) {
@@ -22,6 +27,7 @@ run_ui (char ** argv, int argc) {
     if (args->version) { display_version(); return 0; }
     
     if (strlen(args->file_path) != 0) { 
+        if (!is_correct_file(args->file_path)) return -1;
 //        if (run_debugger(args->file_path) != 0) return -1;
         if (run_repl() != 0) return -1;
     }
@@ -50,4 +56,13 @@ parse_args (char ** argv, int argc) {
     }
 
     return args;
+}
+
+static inline bool
+is_correct_file (const char * file_path) {
+    FILE * file = fopen(file_path);
+    if (file == NULL) {
+        return false;
+    }
+    return true;
 }

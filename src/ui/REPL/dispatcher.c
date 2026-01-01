@@ -35,5 +35,5 @@ help_command () {
     puts("n            Proceed to the next step.");
     puts("r [OPTS]     Start a program.");
     puts("b [ADDR]     Set a breakpoint.");
-    puts("exit         Exit the program.");
+    puts("e            Exit the program.");
 }
