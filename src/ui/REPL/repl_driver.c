@@ -2,29 +2,40 @@
 #include <stdlib.h>
 #include <string.h>
 #include "repl_driver.h"
+#include "dispatcher.h"
 
 #define BUFFER_SIZE 1024
+#define HELP_MSGS_COUNT 5
 
-static inline void display_logo();
-static inline void clear_screen();
-static inline void display_start_info();
-static int read_commands(char * buffer, int buffer_len);
+static inline void
+display_logo();
 
-int run_repl(const char * file_path) {
+static inline void
+clear_screen();
+
+static inline void
+display_start_info();
+
+static int
+read_commands(char * buffer, int buffer_len);
+
+int
+run_repl() {
     clear_screen();
     display_logo();
     display_start_info();
     while (1) {
-        printf("(tbg) ");
+        printf("(tdb) ");
         char buffer[BUFFER_SIZE];
         read_commands(buffer, BUFFER_SIZE);
-        puts(buffer);
+        run_dispatcher(buffer);
     }
 
     return 0;
 }
 
-static int read_commands(char * buffer, int buffer_len) {
+static int
+read_commands(char * buffer, int buffer_len) {
     int i;
     for (i = 0; i < buffer_len - 1; i++) {
         int ch = getchar();
@@ -35,7 +46,8 @@ static int read_commands(char * buffer, int buffer_len) {
     return 0;
 }
 
-static inline void display_logo() {
+static inline void 
+display_logo() {
     puts("  _______ _             _____  ____   _____ ");
     puts(" |__   __(_)           |  __ \\|  _ \\ / ____|");
     puts("    | |   _ _ __  _   _| |  | | |_) | |  __ ");
@@ -46,15 +58,21 @@ static inline void display_logo() {
     puts("                  |___/                     ");
 }
 
-static inline void display_start_info() {
-    puts("b [ADDR] --- Set a breakpoint.");
-    puts("r [OPTS] --- Start a program.");
-    puts("n        --- Proceed to the next step.");
-    puts("s        --- Enter the function.");
-    puts("h        --- Display help information.");
+static inline void
+display_start_info() {
+    const char * msgs[HELP_MSGS_COUNT] = {
+        "b [ADDR] --- Set a breakpoint.",
+        "r [OPTS] --- Start a program.", 
+        "n        --- Proceed to the next step.",
+        "s        --- Enter the function.",
+        "h        --- Display help information.",
+    };
+
+    for (int i = 0; i < HELP_MSGS_COUNT; i++) puts(msgs[i]);
 }
 
-static inline void clear_screen() {
+static inline void
+clear_screen() {
     #ifdef _WIN32
         system("cls");
     #else

@@ -9,9 +9,11 @@
 #define HELP_FLAG "--help"
 #define VERSION_FLAG "--version"
 
-static struct args_t * parse_args (char ** argv, int argc);
+static struct args_t * 
+parse_args (char ** argv, int argc);
 
-int run_ui (char ** argv, int argc) {
+int
+run_ui (char ** argv, int argc) {
     if (argc == 1) return -1;
     
     struct args_t * args = parse_args(argv, argc);
@@ -19,12 +21,17 @@ int run_ui (char ** argv, int argc) {
     if (args->help) { display_help(); return 0; }
     if (args->version) { display_version(); return 0; }
     
-    if (strlen(args->file_path) != 0) return run_repl(args->file_path);
+    if (strlen(args->file_path) != 0) { 
+//        if (run_debugger(args->file_path) != 0) return -1;
+        if (run_repl() != 0) return -1;
+    }
+
     free(args);
     return 0;
 }
 
-static struct args_t * parse_args (char ** argv, int argc) {
+static struct args_t *
+parse_args (char ** argv, int argc) {
     struct args_t * args = (struct args_t *)calloc(1, sizeof(struct args_t));
     for (int i = 1; i < argc; i++) {
         if (strcmp(argv[i], HELP_FLAG) == 0) { args->help = 1; break; }

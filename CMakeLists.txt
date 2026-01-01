@@ -6,6 +6,7 @@ add_executable(TinyDebugger
     src/ui/ui_driver.c
     src/ui/cli/commands.c
     src/ui/REPL/repl_driver.c
+    src/ui/REPL/dispatcher.c
 )
 
 target_include_directories(TinyDebugger

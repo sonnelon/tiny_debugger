@@ -1,3 +1,4 @@
 #pragma once
 
-int run_ui (char ** argv, int argc);
+int
+run_ui (char ** argv, int argc);
