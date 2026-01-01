@@ -72,10 +72,4 @@ display_start_info() {
 }
 
 static inline void
-clear_screen() {
-    #ifdef _WIN32
-        system("cls");
-    #else
-        system("clear");
-    #endif
-}
+clear_screen() { system("clear"); }

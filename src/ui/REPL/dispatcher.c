@@ -24,6 +24,7 @@ static void
 distribute_commands (char app, const char * arg) {
     switch (app) {
         case 'h': help_command(); break;
+        case 'e': return;
         default: help_command(); break;
     }
 }
