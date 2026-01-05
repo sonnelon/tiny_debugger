@@ -37,11 +37,13 @@ run_repl() {
 static int
 read_commands(char * buffer, int buffer_len) {
     int i;
+
     for (i = 0; i < buffer_len - 1; i++) {
         int ch = getchar();
         if (ch == '\n' || ch == EOF) break;
         buffer[i] = (char)ch;
     }
+
     buffer[i] = '\0';
     return 0;
 }

@@ -5,11 +5,11 @@
 #include "debugger_core.h"
 
 static inline bool
-dbg_is_running (enum dbg_state state);
+child_is_stopped (enum dbg_state state);
 
 struct dbg_t *
 create_dbg () {
-    struct dbg_t * dbg_ptr = (struct dbg_t *)malloc(sizeof(struct dbg_t));
+    struct dbg_t * dbg_ptr = (struct dbg_t *)calloc(1, sizeof(struct dbg_t));
     return dbg_ptr;
 }
 
@@ -42,8 +42,15 @@ wait_dbg (struct dbg_t * dbg) {
         int status;
         waitpid(dbg->pid, &status, 0);
 
-        if (WIFEXITED(status)) { dbg->child_state = CHILD_EXITED; return DBG_ERR_CHILD_EXIT; }
-        if (WIFSTOPPED(status)) { dbg->child_state = CHILD_STOPPED; break; }
+        if (WIFEXITED(status)) { 
+            dbg->child_state = CHILD_EXITED;
+            return DBG_ERR_CHILD_EXIT;
+        }
+
+        if (WIFSTOPPED(status)) { 
+            dbg->child_state = CHILD_STOPPED; 
+            break; 
+        }
     }
 
     return DBG_OK;
@@ -64,7 +71,7 @@ dbg_err_t
 continue_child (struct dbg_t * dbg) {
     if (dbg == NULL) return DBG_ERR_INVALID_ARG;
     
-    if (dbg->child_state != CHILD_STOPPED) return DBG_FAIL;
+    if (child_is_stopped(dbg->state)) return DBG_FAIL;
     
     ptrace(PTRACE_CONT, dbg->pid, NULL, NULL);
     dbg->child_state = CHILD_RUNNING;
@@ -73,4 +80,6 @@ continue_child (struct dbg_t * dbg) {
 }
 
 static inline bool
-child_is_stopped (enum dbg_state state) { return state == CHILD_STOPPED; }
+child_is_stopped (enum dbg_state state) { 
+    return state == CHILD_STOPPED;
+}

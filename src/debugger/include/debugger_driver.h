@@ -2,20 +2,8 @@
 
 #include "regs_t.h"
 
-int
+dbg_err_t
 run_debugger (const char * file_path);
 
-int 
-next_step ();
-
-int 
-set_breakpoint ();
-
-struct regs_t
-get_regs ();
-
-int 
-enter_to_func ();
-
-int
-shutdown ();
+dbg_err_t
+get_regs (struct user_regs_struct * regs);
