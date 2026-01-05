@@ -1,13 +1,17 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <sys/user.h>
 
 #include "dispatcher.h"
 #include "logger.h"
 #include "dbg_err.h"
+#include "debugger_driver.h"
+
+struct reg_t { const char * name; unsigned long value; }
 
 static void
-distribute_commands (const char * app, const char * arg, const char * file_path);
+distribute_commands (const char * app, const char * arg, const char * file_path, struct dbg_t * dbg);
 
 static void
 help_command ();
@@ -21,30 +25,44 @@ split_command (char * app, char * arg, const char * command, int len, int * app_
 static void
 realloc_mem (char ** mem, size_t new_sz, int * old_sz);
 
+static inline void
+view_regs (const struct user_regs_struct * regs);
+
 int 
-run_dispatcher (const char * command, const char * file_path) {
+run_dispatcher (struct dbg_t * dbg, const char * command, const char * file_path) {
     int len = strlen(command);
 
     int app_size = 10;
     int arg_size = 10;
 
-    char * app = (char *)malloc(app_size * sizeof(char));
-    char * arg = (char *)malloc(arg_size * sizeof(char));
+    char * app = (char *)calloc(app_size, sizeof(char));
+    char * arg = (char *)calloc(arg_size, sizeof(char));
 
     split_command(app, arg, command, len, &app_size, &arg_size);
 
-    distribute_commands(app, arg, file_path);
+    distribute_commands(app, arg, file_path, dbg);
     free(arg);
+    free(app);
 }
 
 static void
-distribute_commands (const char * app, const char * arg, const char * file_path) {
+distribute_commands (const char * app, const char * arg, const char * file_path, struct dbg_t * dbg) {
     if (strcmp(app, "h") == 0) { help_command(); return; }
     if (strcmp(app, "r") == 0) { 
-        if (run_dbg(file_path) == DBG_ERR_START) {
+        if (run_dbg(file_path, dbg) == DBG_ERR_START) {
             log_info("The debugger is already running.");
             return;
         }
+    }
+
+    if (strcmp(app, "regs") == 0) {
+        struct user_regs_struct regs;
+        if (get_regs(&regs, dbg) == DBG_ERR_NO_START) {
+            log_err("The debugger is not running.");
+            return;
+        }
+
+        view_regs(&regs);
     }
 
     help_command();
@@ -56,14 +74,25 @@ help_command () {
     puts("s            Enter the function.");
     puts("n            Proceed to the next step.");
     puts("regs         Get the value of registers.");
+    puts("reg [name]   Get the value of register by name.");
     puts("r [OPTS]     Start a program.");
     puts("b [ADDR]     Set a breakpoint.");
     puts("e            Exit the program.");
 }
 
 static dbg_err_t 
-run_dbg (const char * file_path) {
-    return DBG_OK;
+run_dbg (const char * file_path, struct dbg_t * dbg) {
+    return run_dbg(dbg, file_path);
+}
+
+static inline void
+view_regs (const struct user_regs_struct * regs) {
+    int registers_len = 4;
+    const reg_t registers[registers_len] = {
+        {"sp", regs->sp}, {"pc", regs->pc}, {"ebp", reg->ebp}, {"erp", reg->erp}, {"rip", reg->rip},
+    };
+
+    for (int i = 0; i < registers_len; i++) printf("%s --- %d", registers[i]->name, register[i]->value);
 }
 
 static void 

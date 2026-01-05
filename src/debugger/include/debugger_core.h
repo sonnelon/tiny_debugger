@@ -8,7 +8,8 @@ enum child_state {
     CHILD_EXITED,
     CHILD_RUNNING,
     CHILD_CREATED,
-    CHILD_STOPPED
+    CHILD_STOPPED,
+    CHILD_NOTHING
 }
 
 struct dbg_t {

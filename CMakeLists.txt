@@ -16,6 +16,7 @@ target_include_directories(TinyDebugger
         src/ui/include
         src/include
         src/utils/include
+        src/debugger/include
 )
 
 target_compile_options(TinyDebugger PUBLIC -O2 -Wall -Wextra -Wpedantic)

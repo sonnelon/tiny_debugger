@@ -10,4 +10,5 @@ typedef enum {
     DBG_ERR_FAILED_CREATE_PROCCESS = -4,
     DBG_ERR_CHILD_EXIT = -5,
     DBG_ERR_START = -9,
+    DBG_ERR_NO_START = -10
 } dbg_err_t;
