@@ -1,5 +1,9 @@
+#include <stdio.h>
+
 int main () {
     int a = 1 + 1;
     int b = a + 1;
     int res = a + b;
+
+    printf("%d", res);
 }
