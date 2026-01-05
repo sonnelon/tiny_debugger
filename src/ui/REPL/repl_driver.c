@@ -20,7 +20,7 @@ static int
 read_commands(char * buffer, int buffer_len);
 
 int
-run_repl() {
+run_repl(const char * file_path) {
     clear_screen();
     display_logo();
     display_start_info();
@@ -28,7 +28,7 @@ run_repl() {
         printf("(tdb) ");
         char buffer[BUFFER_SIZE];
         read_commands(buffer, BUFFER_SIZE);
-        run_dispatcher(buffer);
+        run_dispatcher(buffer, file_path);
     }
 
     return 0;

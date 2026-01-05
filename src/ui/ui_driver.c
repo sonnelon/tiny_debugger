@@ -37,7 +37,7 @@ run_ui (char ** argv, int argc) {
     
     if (strlen(args->file_path) != 0) { 
         if (!is_correct_file(args->file_path)) return -1;
-        if (run_repl() != 0) return -1;
+        if (run_repl(args->file_path) != 0) return -1;
     }
 
     free(args);

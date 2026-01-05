@@ -1,8 +1,9 @@
 #pragma once
 
-#include "regs_t.h"
+#include "debugger_core.h"
+#include "dbg_err.h"
 
-dbg_err_t
+struct dbg_t *
 run_debugger (const char * file_path);
 
 dbg_err_t
