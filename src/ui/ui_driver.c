@@ -19,29 +19,29 @@ parse_args (char ** argv, int argc);
 static inline bool
 is_correct_file (const char * file_path);
 
-int
+dbg_err_t
 run_ui (char ** argv, int argc) {
     if (argc == 1) { 
         log_err("the path to the file is missing.");
-        return -1; 
+        return DBG_ERR_INVALID_ARG; 
     }
     
     struct args_t * args = parse_args(argv, argc);
     if (args == NULL) { 
         log_err("failed to allocate memmory.");
-        return -1; 
+        return DBG_FAIL; 
     }
 
-    if (args->help) { display_help(); return 0; }
-    if (args->version) { display_version(); return 0; }
+    if (args->help) { display_help(); return DBG_OK; }
+    if (args->version) { display_version(); return DBG_OK; }
     
     if (strlen(args->file_path) != 0) { 
-        if (!is_correct_file(args->file_path)) return -1;
-        if (run_repl(args->file_path) != 0) return -1;
+        if (!is_correct_file(args->file_path)) return DBG_FAIL;
+        if (run_repl(args->file_path) != 0) return DBG_FAIL;
     }
 
     free(args);
-    return 0;
+    return DBG_OK;
 }
 
 static struct args_t *

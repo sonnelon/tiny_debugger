@@ -4,37 +4,32 @@
 #include "repl_driver.h"
 #include "dispatcher.h"
 
-#define BUFFER_SIZE 1024
-#define HELP_MSGS_COUNT 5
-
 static inline void
 display_logo();
 
 static inline void
-clear_screen();
-
-static inline void
 display_start_info();
 
-static int
+static dbg_err_t 
 read_commands(char * buffer, int buffer_len);
 
-int
+dbg_err_t
 run_repl(const char * file_path) {
-    clear_screen();
+    system("clear");
     display_logo();
     display_start_info();
+    int buff_sz = 1024;
     while (1) {
-        printf("(tdb) ");
-        char buffer[BUFFER_SIZE];
-        read_commands(buffer, BUFFER_SIZE);
+        printf("tdb >> ");
+        char buffer[buff_sz];
+        read_commands(buffer, buff_sz);
         run_dispatcher(buffer, file_path);
     }
 
-    return 0;
+    return DBG_OK;
 }
 
-static int
+static dbg_err_t
 read_commands(char * buffer, int buffer_len) {
     int i;
 
@@ -45,7 +40,7 @@ read_commands(char * buffer, int buffer_len) {
     }
 
     buffer[i] = '\0';
-    return 0;
+    return DBG_OK;
 }
 
 static inline void 
@@ -62,7 +57,8 @@ display_logo() {
 
 static inline void
 display_start_info() {
-    const char * msgs[HELP_MSGS_COUNT] = {
+    int msgs_sz = 5;
+    const char * msgs[msgs_sz] = {
         "b [ADDR] --- Set a breakpoint.",
         "r [OPTS] --- Start a program.", 
         "n        --- Proceed to the next step.",
@@ -70,8 +66,5 @@ display_start_info() {
         "h        --- Display help information.",
     };
 
-    for (int i = 0; i < HELP_MSGS_COUNT; i++) puts(msgs[i]);
+    for (int i = 0; i < msgs_sz; i++) puts(msgs[i]);
 }
-
-static inline void
-clear_screen() { system("clear"); }
