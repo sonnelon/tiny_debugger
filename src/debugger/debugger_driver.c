@@ -25,3 +25,6 @@ dbg_driver_get_regs (struct user_regs_struct * regs, struct dbg_t * dbg) {
 
     return DBG_OK;
 }
+
+void
+dbg_driver_exit (struct dbg_t * dbg) { dbg_core_exit(dbg); }

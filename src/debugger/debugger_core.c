@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <sys/ptrace.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -77,7 +78,6 @@ dbg_core_get_regs (const struct dbg_t * dbg, struct user_regs_struct * regs) {
     if (dbg->child_state == CHILD_NOTHING) return DBG_ERR_NO_START;
 
     ptrace(PTRACE_GETREGS, dbg->pid, NULL, regs);
-    dbg_core_wait(dbg);
     return DBG_OK;
 }
 
@@ -90,8 +90,19 @@ dbg_core_continue_child (struct dbg_t * dbg) {
     
     ptrace(PTRACE_CONT, dbg->pid, NULL, NULL);
     dbg->child_state = CHILD_RUNNING;
+    dbg_core_wait(dbg);
 
     return DBG_OK;
+}
+
+void
+dbg_core_exit (struct dbg_t * dbg) {
+    printf("\n");
+    log_info("Gracefull shutdown started");
+    ptrace(PTRACE_DETACH, dbg->pid, NULL, NULL);
+    free(dbg);
+    log_info("Successfuly exit.");
+    abort();
 }
 
 static inline bool

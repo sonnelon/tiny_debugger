@@ -16,12 +16,11 @@ static dbg_err_t
 read_commands (char * buffer, int buffer_len);
 
 dbg_err_t
-repl_run (const char * file_path) {
+repl_run (const char * file_path, struct dbg_t * dbg) {
     system("clear");
     display_logo();
     display_start_info();
 
-    struct dbg_t * dbg = dbg_driver_init();
     int buff_sz = 1024;
     while (1) {
         printf("tdb >> ");

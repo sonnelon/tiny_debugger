@@ -20,7 +20,7 @@ static inline bool
 is_correct_file (const char * file_path);
 
 dbg_err_t
-ui_run (char ** argv, int argc) {
+ui_run (char ** argv, int argc, struct dbg_t * dbg) {
     if (argc == 1) { 
         log_err("the path to the file is missing.");
         return DBG_ERR_INVALID_ARG; 
@@ -37,7 +37,7 @@ ui_run (char ** argv, int argc) {
     
     if (strlen(args->file_path) != 0) { 
         if (!is_correct_file(args->file_path)) return DBG_FAIL;
-        if (repl_run(args->file_path) != 0) return DBG_FAIL;
+        if (repl_run(args->file_path, dbg) != 0) return DBG_FAIL;
     }
 
     free(args);

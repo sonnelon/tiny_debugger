@@ -61,6 +61,7 @@ distribute_commands (const char * app, const char * arg, const char * file_path,
         }
 
         view_regs(&regs);
+        return;
     }
 
     help_command();

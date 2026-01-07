@@ -11,3 +11,6 @@ dbg_driver_run (struct dbg_t * dbg, const char * file_path);
 
 dbg_err_t
 dbg_driver_get_regs (struct user_regs_struct * regs, struct dbg_t * dbg);
+
+void
+dbg_driver_exit (struct dbg_t * dbg);
