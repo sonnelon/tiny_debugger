@@ -7,7 +7,7 @@
 #include "ui_driver.h"
 #include "repl_driver.h"
 #include "args_t.h"
-#include "cli.h"
+#include "ui_cli.h"
 #include "logger.h"
 
 #define HELP_FLAG "--help"
@@ -20,7 +20,7 @@ static inline bool
 is_correct_file (const char * file_path);
 
 dbg_err_t
-run_ui (char ** argv, int argc) {
+ui_run (char ** argv, int argc) {
     if (argc == 1) { 
         log_err("the path to the file is missing.");
         return DBG_ERR_INVALID_ARG; 
@@ -32,12 +32,12 @@ run_ui (char ** argv, int argc) {
         return DBG_FAIL; 
     }
 
-    if (args->help) { display_help(); return DBG_OK; }
-    if (args->version) { display_version(); return DBG_OK; }
+    if (args->help) { cli_display_help(); return DBG_OK; }
+    if (args->version) { cli_display_version(); return DBG_OK; }
     
     if (strlen(args->file_path) != 0) { 
         if (!is_correct_file(args->file_path)) return DBG_FAIL;
-        if (run_repl(args->file_path) != 0) return DBG_FAIL;
+        if (repl_run(args->file_path) != 0) return DBG_FAIL;
     }
 
     free(args);

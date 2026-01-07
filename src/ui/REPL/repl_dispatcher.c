@@ -3,21 +3,18 @@
 #include <stdlib.h>
 #include <sys/user.h>
 
-#include "dispatcher.h"
+#include "repl_dispatcher.h"
 #include "logger.h"
 #include "dbg_err.h"
 #include "debugger_driver.h"
 
-struct reg_t { char * name; unsigned long value; }
+struct reg_t { char * name; unsigned long value; };
 
 static void
 distribute_commands (const char * app, const char * arg, const char * file_path, struct dbg_t * dbg);
 
 static void
 help_command ();
-
-static struct dbg_t *
-run_dbg (const char * file_path);
 
 static void 
 split_command (char * app, char * arg, const char * command, int len, int * app_size, int * arg_size);
@@ -29,7 +26,7 @@ static inline void
 view_regs (const struct user_regs_struct * regs);
 
 int 
-run_dispatcher (struct dbg_t * dbg, const char * command, const char * file_path) {
+repl_run_dispatcher (struct dbg_t * dbg, const char * command, const char * file_path) {
     int len = strlen(command);
 
     int app_size = 10;
@@ -51,14 +48,14 @@ static void
 distribute_commands (const char * app, const char * arg, const char * file_path, struct dbg_t * dbg) {
     if (strcmp(app, "h") == 0) { help_command(); return; }
     if (strcmp(app, "r") == 0) {
-        dbg_err_t err = run_dbg(dbg, file_path);
+        dbg_err_t err = dbg_driver_run(dbg, file_path);
         if (err == DBG_ERR_START) log_err("The debugger is already start.");
         return;
     } 
 
     if (strcmp(app, "regs") == 0) {
         struct user_regs_struct regs;
-        if (get_regs(&regs, dbg) == DBG_ERR_NO_START) {
+        if (dbg_driver_get_regs(&regs, dbg) == DBG_ERR_NO_START) {
             log_err("The debugger is not running.");
             return;
         }
@@ -80,9 +77,6 @@ help_command () {
     puts("b   [ADDR]   Set a breakpoint.");
     puts("e            Exit the program.");
 }
-
-static struct dbg_t * 
-run_dbg (const char * file_path) { return run_debugger(file_path); }
 
 static inline void
 view_regs (const struct user_regs_struct * regs) {

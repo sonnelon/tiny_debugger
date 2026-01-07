@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include "config.h"
-#include "cli.h"
+#include "ui_cli.h"
 
 void
-display_help() {
+cli_display_help() {
     printf("Usage: %s [FLAGS].. [FILE]\n", DBG_NAME);
     puts("Options: ");
     puts("      --help    Display this info and exit.");
@@ -11,4 +11,4 @@ display_help() {
 }
 
 void
-display_version() { printf("%s current version: %s\n", DBG_NAME, DBG_VERSION); }
+cli_display_version() { printf("%s current version: %s\n", DBG_NAME, DBG_VERSION); }

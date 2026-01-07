@@ -4,10 +4,12 @@ project(TinyDebugger C)
 add_executable(TinyDebugger
     main.c
     src/ui/ui_driver.c
-    src/ui/cli/commands.c
+    src/ui/cli/ui_cli.c
     src/ui/REPL/repl_driver.c
-    src/ui/REPL/dispatcher.c
+    src/ui/REPL/repl_dispatcher.c
     src/utils/logger.c
+    src/debugger/debugger_driver.c
+    src/debugger/debugger_core.c
 )
 
 target_include_directories(TinyDebugger

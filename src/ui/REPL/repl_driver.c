@@ -2,37 +2,39 @@
 #include <stdlib.h>
 #include <string.h>
 #include "repl_driver.h"
-#include "dispatcher.h"
+#include "repl_dispatcher.h"
+
+#define MSGS_SZ 5
 
 static inline void
-display_logo();
+display_logo ();
 
 static inline void
-display_start_info();
+display_start_info ();
 
 static dbg_err_t 
-read_commands(char * buffer, int buffer_len);
+read_commands (char * buffer, int buffer_len);
 
 dbg_err_t
-run_repl(const char * file_path) {
+repl_run (const char * file_path) {
     system("clear");
     display_logo();
     display_start_info();
 
-    struct dbg_t * dbg = init_dbg();
+    struct dbg_t * dbg = dbg_driver_init();
     int buff_sz = 1024;
     while (1) {
         printf("tdb >> ");
         char buffer[buff_sz];
         read_commands(buffer, buff_sz);
-        run_dispatcher(dbg, buffer, file_path);
+        repl_run_dispatcher(dbg, buffer, file_path);
     }
 
     return DBG_OK;
 }
 
 static dbg_err_t
-read_commands(char * buffer, int buffer_len) {
+read_commands (char * buffer, int buffer_len) {
     int i;
 
     for (i = 0; i < buffer_len - 1; i++) {
@@ -46,7 +48,7 @@ read_commands(char * buffer, int buffer_len) {
 }
 
 static inline void 
-display_logo() {
+display_logo () {
     puts("  _______ _             _____  ____   _____ ");
     puts(" |__   __(_)           |  __ \\|  _ \\ / ____|");
     puts("    | |   _ _ __  _   _| |  | | |_) | |  __ ");
@@ -58,9 +60,8 @@ display_logo() {
 }
 
 static inline void
-display_start_info() {
-    int msgs_sz = 5;
-    const char * msgs[msgs_sz] = {
+display_start_info () {
+    const char * msgs[MSGS_SZ] = {
         "b [ADDR] --- Set a breakpoint.",
         "r [OPTS] --- Start a program.", 
         "n        --- Proceed to the next step.",
@@ -68,5 +69,5 @@ display_start_info() {
         "h        --- Display help information.",
     };
 
-    for (int i = 0; i < msgs_sz; i++) puts(msgs[i]);
+    for (int i = 0; i < MSGS_SZ; i++) puts(msgs[i]);
 }
