@@ -28,6 +28,7 @@ dbg_core_run (struct dbg_t * dbg, const char * file_path) {
     if (pid == 0) {
         ptrace(PTRACE_TRACEME, 0, NULL, NULL);
         raise(SIGSTOP);
+        signal(SIGINT, SIG_IGN);
         execve(file_path, NULL, NULL);
         _exit(1);
     }
@@ -102,7 +103,7 @@ dbg_core_exit (struct dbg_t * dbg) {
     ptrace(PTRACE_DETACH, dbg->pid, NULL, NULL);
     free(dbg);
     log_info("Successfuly exit.");
-    abort();
+    _exit(0);
 }
 
 static inline bool

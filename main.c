@@ -4,11 +4,13 @@
 #include "debugger_driver.h"
 #include "logger.h"
 
-#define CREATE_SIGNAL_HANDLER(func_name, action) \
-    void func_name(int sig_num) { \
-        (void)sig_num; \
-        action; \
-    }
+volatile sig_atomic_t want_exit = 0;
+
+static inline void
+sigint_handler (int signum);
+
+static inline void
+register_sigint_action ();
 
 int
 main (int argc, char * argv[]) {
@@ -19,8 +21,28 @@ main (int argc, char * argv[]) {
         return -1;
     }
     
-    CREATE_SIGNAL_HANDLER(sigint_handler, dbg_driver_exit(dbg));
-    signal(SIGINT, sigint_handler);
+    register_sigint_action();
 
-    if (ui_run(argv, argc, dbg) != 0) return -1;
+    while (1) {
+        if (want_exit) { dbg_driver_exit(dbg); break; }
+        if (ui_run(argv, argc, dbg, &want_exit) != DBG_OK) break;
+    }
+
+    return 0;
+}
+
+static inline void
+sigint_handler (int signum) {
+    (void)signum;
+    want_exit = 1;
+}
+
+static inline void
+register_sigint_action () {
+    struct sigaction sa = {0};
+    sa.sa_handler = sigint_handler;
+    sigemptyset(&sa.sa_mask);
+    sa.sa_flags = 0;
+
+    sigaction(SIGINT, &sa, NULL);
 }

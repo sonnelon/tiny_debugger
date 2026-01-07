@@ -64,7 +64,7 @@ distribute_commands (const char * app, const char * arg, const char * file_path,
         return;
     }
 
-    help_command();
+    if (strcmp(app, "exit") == 0) dbg_driver_exit(dbg);
 }
 
 static void
