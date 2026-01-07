@@ -1,17 +1,16 @@
 #include "debugger_driver.h"
 
-struct dbg_t *
-run_debugger (const char * file_path) {
-    struct dbg_t * dbg = create_dbg();
-    if (dbg == NULL) return NULL;
+struct dbg_t * 
+init_dbg () { return create_dbg(); }
 
-    dbg_err_t err = run_dbg(dbg);
-    if (err != DBG_OK) {
-        free(dbg);
-        return NULL;
-    }
+dbg_err_t
+run_debugger (struct dbg_t * dbg, const char * file_path) {
+    if (dbg->child_state != CHILD_NOTHING) return DBG_ERR_START;
 
-    return dbg;
+    dbg_err_t err = run_dbg(dbg, file_path);
+    if (err != DBG_OK) return err;
+    
+    return DBG_OK;
 }
 
 dbg_err_t

@@ -18,12 +18,14 @@ run_repl(const char * file_path) {
     system("clear");
     display_logo();
     display_start_info();
+
+    struct dbg_t * dbg = init_dbg();
     int buff_sz = 1024;
     while (1) {
         printf("tdb >> ");
         char buffer[buff_sz];
         read_commands(buffer, buff_sz);
-        run_dispatcher(buffer, file_path);
+        run_dispatcher(dbg, buffer, file_path);
     }
 
     return DBG_OK;

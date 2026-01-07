@@ -8,7 +8,7 @@
 #include "dbg_err.h"
 #include "debugger_driver.h"
 
-struct reg_t { const char * name; unsigned long value; }
+struct reg_t { char * name; unsigned long value; }
 
 static void
 distribute_commands (const char * app, const char * arg, const char * file_path, struct dbg_t * dbg);
@@ -16,7 +16,7 @@ distribute_commands (const char * app, const char * arg, const char * file_path,
 static void
 help_command ();
 
-static dbg_err_t 
+static struct dbg_t *
 run_dbg (const char * file_path);
 
 static void 
@@ -43,17 +43,18 @@ run_dispatcher (struct dbg_t * dbg, const char * command, const char * file_path
     distribute_commands(app, arg, file_path, dbg);
     free(arg);
     free(app);
+
+    return 0;
 }
 
 static void
 distribute_commands (const char * app, const char * arg, const char * file_path, struct dbg_t * dbg) {
     if (strcmp(app, "h") == 0) { help_command(); return; }
-    if (strcmp(app, "r") == 0) { 
-        if (run_dbg(file_path, dbg) == DBG_ERR_START) {
-            log_info("The debugger is already running.");
-            return;
-        }
-    }
+    if (strcmp(app, "r") == 0) {
+        dbg_err_t err = run_dbg(dbg, file_path);
+        if (err == DBG_ERR_START) log_err("The debugger is already start.");
+        return;
+    } 
 
     if (strcmp(app, "regs") == 0) {
         struct user_regs_struct regs;
@@ -74,25 +75,40 @@ help_command () {
     puts("s            Enter the function.");
     puts("n            Proceed to the next step.");
     puts("regs         Get the value of registers.");
-    puts("reg [name]   Get the value of register by name.");
-    puts("r [OPTS]     Start a program.");
-    puts("b [ADDR]     Set a breakpoint.");
+    puts("reg [NAME]   Get the value of register by name.");
+    puts("r   [OPTS]   Start a program.");
+    puts("b   [ADDR]   Set a breakpoint.");
     puts("e            Exit the program.");
 }
 
-static dbg_err_t 
-run_dbg (const char * file_path, struct dbg_t * dbg) {
-    return run_dbg(dbg, file_path);
-}
+static struct dbg_t * 
+run_dbg (const char * file_path) { return run_debugger(file_path); }
 
 static inline void
 view_regs (const struct user_regs_struct * regs) {
-    int registers_len = 4;
-    const reg_t registers[registers_len] = {
-        {"sp", regs->sp}, {"pc", regs->pc}, {"ebp", reg->ebp}, {"erp", reg->erp}, {"rip", reg->rip},
+    struct reg_t registers[] = {
+        {"rax", regs->rax},
+        {"rbx", regs->rbx},
+        {"rcx", regs->rcx},
+        {"rdx", regs->rdx},
+        {"rsi", regs->rsi},
+        {"rdi", regs->rdi},
+        {"rbp", regs->rbp},
+        {"rsp", regs->rsp},
+        {"rip", regs->rip},
+        {"r8", regs->r8},
+        {"r9", regs->r9},
+        {"r10", regs->r10},
+        {"r11", regs->r11},
+        {"r12", regs->r12},
+        {"r13", regs->r13},
+        {"r14", regs->r14},
+        {"r15", regs->r15}
     };
 
-    for (int i = 0; i < registers_len; i++) printf("%s --- %d", registers[i]->name, register[i]->value);
+    const int registers_len = sizeof(registers)/sizeof(registers[0]);
+
+    for (int i = 0; i < registers_len; i++) printf("%s --- 0x%lx\n", registers[i].name, registers[i].value);
 }
 
 static void 
