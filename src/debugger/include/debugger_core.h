@@ -26,6 +26,9 @@ dbg_core_run (struct dbg_t * dbg, const char * file_path);
 dbg_err_t 
 dbg_core_wait (struct dbg_t * dbg);
 
+dbg_err_t
+dbg_core_step (struct dbg_t * dbg);
+
 void
 dbg_core_exit (struct dbg_t * dbg);
 

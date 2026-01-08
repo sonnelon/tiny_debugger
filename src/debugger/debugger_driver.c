@@ -16,14 +16,13 @@ dbg_driver_run (struct dbg_t * dbg, const char * file_path) {
 dbg_err_t
 dbg_driver_get_regs (struct user_regs_struct * regs, struct dbg_t * dbg) {
     if (dbg == NULL || regs == NULL) return DBG_ERR_INVALID_ARG;
+    return dbg_core_get_regs(dbg, regs);
+}
 
-    dbg_err_t err = dbg_core_wait(dbg);
-    if (err != DBG_OK) return err;
-
-    err = dbg_core_get_regs(dbg, regs);
-    if (err != DBG_OK) return err;
-
-    return DBG_OK;
+dbg_err_t
+dbg_driver_step (struct dbg_t * dbg) {
+    if (!dbg) return DBG_ERR_INVALID_ARG;
+    return dbg_core_step(dbg);
 }
 
 void

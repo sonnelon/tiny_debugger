@@ -64,6 +64,8 @@ distribute_commands (const char * app, const char * arg, const char * file_path,
         return;
     }
 
+    if (strcmp(app, "s") == 0) dbg_driver_step(dbg);
+
     if (strcmp(app, "exit") == 0) dbg_driver_exit(dbg);
 }
 

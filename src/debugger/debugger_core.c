@@ -18,7 +18,6 @@ dbg_core_create () {
 
 dbg_err_t
 dbg_core_run (struct dbg_t * dbg, const char * file_path) {
-    if (dbg == NULL) return DBG_ERR_INVALID_ARG;
     if (dbg->child_state == CHILD_CREATED) return DBG_ERR_START;
 
     pid_t pid = fork();
@@ -41,7 +40,6 @@ dbg_core_run (struct dbg_t * dbg, const char * file_path) {
 
 dbg_err_t 
 dbg_core_wait (struct dbg_t * dbg) {
-    if (dbg == NULL) return DBG_ERR_INVALID_ARG;
     if (dbg->child_state == CHILD_NOTHING) return DBG_ERR_NO_START;
     
     while (1) {
@@ -64,7 +62,6 @@ dbg_core_wait (struct dbg_t * dbg) {
 
 dbg_err_t
 dbg_core_step (struct dbg_t * dbg) {
-    if (dbg == NULL) return DBG_ERR_INVALID_ARG;
     if (dbg->child_state == CHILD_NOTHING) return DBG_ERR_NO_START;
 
     dbg->child_state = CHILD_RUNNING;
@@ -75,7 +72,6 @@ dbg_core_step (struct dbg_t * dbg) {
 
 dbg_err_t
 dbg_core_get_regs (const struct dbg_t * dbg, struct user_regs_struct * regs) {
-    if (dbg == NULL) return DBG_ERR_INVALID_ARG;
     if (dbg->child_state == CHILD_NOTHING) return DBG_ERR_NO_START;
 
     ptrace(PTRACE_GETREGS, dbg->pid, NULL, regs);
@@ -84,7 +80,6 @@ dbg_core_get_regs (const struct dbg_t * dbg, struct user_regs_struct * regs) {
 
 dbg_err_t 
 dbg_core_continue_child (struct dbg_t * dbg) {
-    if (dbg == NULL) return DBG_ERR_INVALID_ARG;
     if (dbg->child_state == CHILD_NOTHING) return DBG_ERR_NO_START;
 
     if (child_is_stopped(dbg->child_state)) return DBG_FAIL;
