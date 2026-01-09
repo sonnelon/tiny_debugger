@@ -5,6 +5,7 @@
 #include <sys/wait.h>
 
 #include "debugger_core.h"
+#include "logger.h"
 
 static inline bool child_is_stopped (enum child_state state);
 
@@ -35,7 +36,7 @@ dbg_err_t dbg_core_run (struct dbg_t * dbg, const char * file_path)
     dbg->pid = pid;
     dbg->child_state = CHILD_CREATED;
 
-	printf("PID of process: %d\n", pid);
+	log_info("PID of process: %d", pid);
 
     return DBG_OK;
 }
