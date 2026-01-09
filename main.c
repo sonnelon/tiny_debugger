@@ -1,9 +1,8 @@
 #include <signal.h>
 
 #include "ui_driver.h"
-#include "debugger_driver.h"
+#include "dbg_driver.h"
 #include "logger.h"
-
 
 static inline void sigint_handler (int signum);
 static inline void register_sigint_action ();

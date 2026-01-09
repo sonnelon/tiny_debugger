@@ -1,4 +1,8 @@
-#include "debugger_driver.h"
+#include "dbg_exit.h"
+#include "dbg_core.h"
+#include "dbg_step.h"
+#include "dbg_regs.h"
+#include "dbg_driver.h"
 
 struct dbg_t * dbg_driver_init () 
 { 

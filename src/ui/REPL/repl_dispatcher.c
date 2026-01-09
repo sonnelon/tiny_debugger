@@ -6,7 +6,7 @@
 #include "repl_dispatcher.h"
 #include "logger.h"
 #include "dbg_err.h"
-#include "debugger_driver.h"
+#include "dbg_driver.h"
 
 struct reg_t {
 	char * name;
@@ -49,8 +49,7 @@ static void distribute_commands (const char * app, const char * arg, const char 
 
     if (compare_app_value(app, "r", "run")) 
 	{
-        dbg_err_t err = dbg_driver_run(dbg, file_path);
-        if (err == DBG_ERR_START) log_err("The debugger is already start.");
+        if (dbg_driver_run(dbg, file_path) == DBG_ERR_START) log_err("The debugger is already start.");
         return;
     } 
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "debugger_core.h"
+#include "dbg_core.h"
 #include "dbg_err.h"
 
 struct dbg_t * dbg_driver_init ();

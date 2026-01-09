@@ -8,8 +8,12 @@ add_executable(TinyDebugger
     src/ui/REPL/repl_driver.c
     src/ui/REPL/repl_dispatcher.c
     src/utils/logger.c
-    src/debugger/debugger_driver.c
-    src/debugger/debugger_core.c
+    src/debugger/core/dbg_step.c
+    src/debugger/core/dbg_continue_child.c
+    src/debugger/core/dbg_exit.c
+    src/debugger/core/dbg_core.c
+    src/debugger/core/dbg_regs.c
+    src/debugger/dbg_driver.c
 )
 
 target_include_directories(TinyDebugger

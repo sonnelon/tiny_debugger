@@ -18,15 +18,5 @@ struct dbg_t {
 };
 
 struct dbg_t * dbg_core_create ();
-
 dbg_err_t dbg_core_run (struct dbg_t * dbg, const char * file_path);
-
 dbg_err_t dbg_core_wait (struct dbg_t * dbg);
-
-dbg_err_t dbg_core_step (struct dbg_t * dbg);
-
-void dbg_core_exit (struct dbg_t * dbg);
-
-dbg_err_t dbg_core_continue_child (struct dbg_t * dbg);
-
-dbg_err_t dbg_core_get_regs (const struct dbg_t * dbg, struct user_regs_struct * regs);
