@@ -8,25 +8,20 @@
 #include "dbg_err.h"
 #include "debugger_driver.h"
 
-struct reg_t { char * name; unsigned long value; };
+struct reg_t {
+	char * name;
+	unsigned long value; 
+};
 
-static void
-distribute_commands (const char * app, const char * arg, const char * file_path, struct dbg_t * dbg);
+static inline bool compare_app_value (const char * app, const char * arg_one, const char * arg_two);
+static void distribute_commands (const char * app, const char * arg, const char * file_path, struct dbg_t * dbg);
+static void help_command ();
+static void split_command (char * app, char * arg, const char * command, int len, int * app_size, int * arg_size);
+static void realloc_mem (char ** mem, size_t new_sz, int * old_sz);
+static inline void view_regs (const struct user_regs_struct * regs);
 
-static void
-help_command ();
-
-static void 
-split_command (char * app, char * arg, const char * command, int len, int * app_size, int * arg_size);
-
-static void
-realloc_mem (char ** mem, size_t new_sz, int * old_sz);
-
-static inline void
-view_regs (const struct user_regs_struct * regs);
-
-int 
-repl_run_dispatcher (struct dbg_t * dbg, const char * command, const char * file_path) {
+int repl_run_dispatcher (struct dbg_t * dbg, const char * command, const char * file_path) 
+{
     int len = strlen(command);
 
     int app_size = 10;
@@ -44,18 +39,26 @@ repl_run_dispatcher (struct dbg_t * dbg, const char * command, const char * file
     return 0;
 }
 
-static void
-distribute_commands (const char * app, const char * arg, const char * file_path, struct dbg_t * dbg) {
-    if (strcmp(app, "h") == 0) { help_command(); return; }
-    if (strcmp(app, "r") == 0) {
+static void distribute_commands (const char * app, const char * arg, const char * file_path, struct dbg_t * dbg) 
+{
+    if (compare_app_value(app, "h", "help")) 
+	{
+		help_command();
+		return;
+	}
+
+    if (compare_app_value(app, "r", "run")) 
+	{
         dbg_err_t err = dbg_driver_run(dbg, file_path);
         if (err == DBG_ERR_START) log_err("The debugger is already start.");
         return;
     } 
 
-    if (strcmp(app, "regs") == 0) {
+    if (compare_app_value(app, "regs", NULL)) 
+	{
         struct user_regs_struct regs;
-        if (dbg_driver_get_regs(&regs, dbg) == DBG_ERR_NO_START) {
+        if (dbg_driver_get_regs(&regs, dbg) == DBG_ERR_NO_START) 
+		{
             log_err("The debugger is not running.");
             return;
         }
@@ -64,25 +67,30 @@ distribute_commands (const char * app, const char * arg, const char * file_path,
         return;
     }
 
-    if (strcmp(app, "s") == 0) dbg_driver_step(dbg);
+    if (compare_app_value(app, "s", "step")) dbg_driver_step(dbg);
 
-    if (strcmp(app, "exit") == 0) dbg_driver_exit(dbg);
+    if (compare_app_value(app, "e", "exit")) dbg_driver_exit(dbg);
 }
 
-static void
-help_command () {
-    puts("h            Display this info.");
-    puts("s            Enter the function.");
-    puts("n            Proceed to the next step.");
-    puts("regs         Get the value of registers.");
-    puts("reg [NAME]   Get the value of register by name.");
-    puts("r   [OPTS]   Start a program.");
-    puts("b   [ADDR]   Set a breakpoint.");
-    puts("e            Exit the program.");
+static void help_command () 
+{
+	const char * help_msgs[] = {
+		"h/help       Display this info.",
+		"s/step       Enter the function.",
+		"n/next       Proceed to the next step.",
+		"regs         Get the value of registers.",
+		"reg   [NAME] Get the value of register by name.",
+		"r/run [OPTS] Start a program.",
+		"b     [ADDR] Set a breakpoint.",
+		"e/exit       Exit the program.",
+	};
+
+	const int help_msgs_len = sizeof(help_msgs)/sizeof(help_msgs[0]);
+	for (int i = 0; i < help_msgs_len; i++) puts(help_msgs[i]);
 }
 
-static inline void
-view_regs (const struct user_regs_struct * regs) {
+static inline void view_regs (const struct user_regs_struct * regs) 
+{
     struct reg_t registers[] = {
         {"rax", regs->rax},
         {"rbx", regs->rbx},
@@ -108,19 +116,21 @@ view_regs (const struct user_regs_struct * regs) {
     for (int i = 0; i < registers_len; i++) printf("%s --- 0x%lx\n", registers[i].name, registers[i].value);
 }
 
-static void 
-split_command (char * app, char * arg, const char * command, int len, int * app_size, int * arg_size) {
+static void split_command (char * app, char * arg, const char * command, int len, int * app_size, int * arg_size) 
+{
     int app_counter = 0;
     int arg_counter = 0;
     bool app_end = false;
 
-    for (int i = 0; i < len; i++) {
+    for (int i = 0; i < len; i++) 
+	{
         if (command[i] == '\n') break;
 
         if (app_counter >= *app_size) realloc_mem(&app, 2*(*app_size), app_size);
         if (arg_counter >= *arg_size) realloc_mem(&arg, 2*(*arg_size), arg_size);
 
-        if (command[i] == ' ' && !app_end) { 
+        if (command[i] == ' ' && !app_end) 
+		{ 
             app_end = true;
             app[app_counter] = '\0';
             continue;
@@ -128,7 +138,8 @@ split_command (char * app, char * arg, const char * command, int len, int * app_
 
         if (command[i] == ' ' && app_end) continue;
 
-        if (!app_end) {
+        if (!app_end) 
+		{
             app[app_counter++] = command[i];
             continue;
         }
@@ -139,9 +150,14 @@ split_command (char * app, char * arg, const char * command, int len, int * app_
     arg[arg_counter] = '\0';
 }
 
-static void
-realloc_mem (char ** mem, size_t new_sz, int * old_sz) {
+static void realloc_mem (char ** mem, size_t new_sz, int * old_sz) 
+{
     char * ptr = (char *)realloc(*mem, new_sz);
     *old_sz = new_sz;
     *mem = ptr;
+}
+
+static inline bool compare_app_value (const char * app, const char * arg_one, const char * arg_two)
+{
+	return (strcmp(app, arg_one) == 0) || ((arg_two == NULL) ? 0 : (strcmp(app, arg_two) == 0));
 }

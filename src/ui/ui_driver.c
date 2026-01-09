@@ -13,29 +13,39 @@
 #define HELP_FLAG "--help"
 #define VERSION_FLAG "--version"
 
-static struct args_t * 
-parse_args (char ** argv, int argc);
+static struct args_t * parse_args (char ** argv, int argc);
 
-static inline bool
-is_correct_file (const char * file_path);
+static inline bool is_correct_file (const char * file_path);
 
-dbg_err_t
-ui_run (char ** argv, int argc, struct dbg_t * dbg, volatile sig_atomic_t * want_exit) {
-    if (argc == 1) { 
+dbg_err_t ui_run (char ** argv, int argc, struct dbg_t * dbg, volatile sig_atomic_t * want_exit) 
+{
+    if (argc == 1) 
+	{ 
         log_err("the path to the file is missing.");
         return DBG_ERR_INVALID_ARG; 
     }
     
     struct args_t * args = parse_args(argv, argc);
-    if (args == NULL) { 
+    if (args == NULL) 
+	{ 
         log_err("failed to allocate memmory.");
         return DBG_FAIL; 
     }
 
-    if (args->help) { cli_display_help(); return DBG_OK; }
-    if (args->version) { cli_display_version(); return DBG_OK; }
+    if (args->help) 
+	{
+		cli_display_help();
+		return DBG_OK;
+	}
+
+    if (args->version) 
+	{
+		cli_display_version(); 
+		return DBG_OK;
+	}
     
-    if (strlen(args->file_path) != 0) { 
+    if (strlen(args->file_path) != 0) 
+	{ 
         if (!is_correct_file(args->file_path)) return DBG_FAIL;
         if (repl_run(args->file_path, dbg, want_exit) != 0) return DBG_FAIL;
     }
@@ -44,18 +54,30 @@ ui_run (char ** argv, int argc, struct dbg_t * dbg, volatile sig_atomic_t * want
     return DBG_OK;
 }
 
-static struct args_t *
-parse_args (char ** argv, int argc) {
+static struct args_t * parse_args (char ** argv, int argc) 
+{
     struct args_t * args = (struct args_t *)calloc(1, sizeof(struct args_t));
-    for (int i = 1; i < argc; i++) {
-        if (strcmp(argv[i], HELP_FLAG) == 0) { args->help = 1; break; }
-        if (strcmp(argv[i], VERSION_FLAG) == 0) { args->version = 1; break; }
+    for (int i = 1; i < argc; i++) 
+	{
+        if (strcmp(argv[i], HELP_FLAG) == 0) 
+		{
+			args->help = 1;
+			break;
+		}
+
+        if (strcmp(argv[i], VERSION_FLAG) == 0) 
+		{
+			args->version = 1;
+			break;
+		}
     }
     
-    if (!args->help && !args->version) {
+    if (!args->help && !args->version) 
+	{
         size_t len = strlen(argv[argc-1]);
         args->file_path = malloc(len + 1);
-        if (args->file_path == NULL) {
+        if (args->file_path == NULL) 
+		{
             log_err("failed to allocate memory.");
             free(args);
             return NULL;
@@ -67,9 +89,10 @@ parse_args (char ** argv, int argc) {
     return args;
 }
 
-static inline bool
-is_correct_file (const char * file_path) {
-    if (access(file_path, X_OK) != 0) {
+static inline bool is_correct_file (const char * file_path) 
+{
+    if (access(file_path, X_OK) != 0) 
+	{
         log_err("file is not executable.");
         return false;
     }
