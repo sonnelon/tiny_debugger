@@ -7,6 +7,9 @@ add_executable(TinyDebugger
     src/ui/cli/ui_cli.c
     src/ui/REPL/repl_driver.c
     src/ui/REPL/repl_dispatcher.c
+    src/ui/REPL/repl_regs.c
+    src/ui/REPL/repl_help_command.c
+    src/ui/REPL/repl_split_command.c
     src/utils/logger.c
     src/debugger/core/dbg_step.c
     src/debugger/core/dbg_continue_child.c
